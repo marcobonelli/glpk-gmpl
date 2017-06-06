@@ -1,0 +1,38 @@
+#- - declaração do modelo
+
+set I;
+
+param Cmax;
+param l{i in I};
+param Vmin{i in I};
+
+var x{i in I} >= 0;
+
+maximize fo: sum{i in I} x[i]*l[i];
+
+s.t. R1{i in I}: x[i] >= Vmin[i]; 
+s.t. R2: sum{i in I} x[i] <= Cmax;
+
+#- - declaração da rotina de impressão personalizada
+
+solve;
+
+printf "" > 'modelo_generico.out';
+printf "lucro total: %d\n\n", fo >> 'modelo_generico.out';
+for{i in I}{
+	printf "quant. de produto %d -> %d\n", i >> 'modelo_generico.out';
+	printf if x[i] > 50 and x[i] < 250 then "%d\n" else "bloqueado\n", x[i] >> 'modelo_generico.out';
+}
+printf "\ntotal produzido -> %d", (sum{i in I}x[i]) >> 'modelo_generico.out';
+
+#- - declaração dos dados do modelo
+
+data;
+
+set I := 1 2 3 4 5;
+
+param Cmax := 800;
+param l := 1 20 2 10 3 30 4 40 5 30;
+param Vmin := 1 200 2 100 3 200 4 50 5 50;
+
+end; 
